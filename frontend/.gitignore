@@ -1,0 +1,297 @@
+# ============================================================
+# AI CAREER INTELLIGENCE SYSTEM - GITIGNORE
+# ============================================================
+
+
+# ============================================================
+# ENVIRONMENT VARIABLES / SECRETS
+# ============================================================
+
+.env
+.env.*
+backend/.env
+frontend/.env
+frontend/.env.*
+*.env
+
+
+# ============================================================
+# PYTHON
+# ============================================================
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Python virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python cache / testing
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Build/package files
+build/
+dist/
+*.egg-info/
+
+
+# ============================================================
+# FASTAPI / UVICORN
+# ============================================================
+
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+
+# ============================================================
+# UPLOADED FILES
+# IMPORTANT:
+# Do not upload user resumes/job descriptions to GitHub
+# ============================================================
+
+backend/uploads/*
+backend/uploads/**
+
+# Keep upload folders in GitHub
+!backend/uploads/.gitkeep
+!backend/uploads/job_descriptions/.gitkeep
+!backend/uploads/resumes/.gitkeep
+
+
+# ============================================================
+# NODE / REACT
+# ============================================================
+
+node_modules/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Frontend build files
+frontend/dist/
+frontend/dist-ssr/
+frontend/build/
+
+# Local environment files
+frontend/.local
+*.local
+
+
+# ============================================================
+# VITE
+# ============================================================
+
+.vite/
+vite.config.local.*
+
+
+# ============================================================
+# DATABASE
+# ============================================================
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# PostgreSQL local files
+*.pgdata
+
+
+# ============================================================
+# IDE / EDITOR
+# ============================================================
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+
+# IntelliJ / PyCharm
+.idea/
+
+# Visual Studio
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+
+# ============================================================
+# OPERATING SYSTEM
+# ============================================================
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+
+# ============================================================
+# WINDOWS
+# ============================================================
+
+*.lnk
+*.stackdump
+
+
+# ============================================================
+# TEMPORARY / BACKUP FILES
+# ============================================================
+
+*.bak
+*.backup
+*.old
+*~
+*.swp
+*.swo
+
+
+# ============================================================
+# LOG FILES
+# ============================================================
+
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# ============================================================
+# GENERATED FILES
+# ============================================================
+
+*.cache
+.cache/
+.temp/
+tmp/
+temp/
+
+
+# ============================================================
+# PYTHON NOTEBOOKS
+# ============================================================
+
+.ipynb_checkpoints/
+
+
+# ============================================================
+# SECRET / KEY FILES
+# ============================================================
+
+*.pem
+*.key
+*.crt
+*.cer
+
+
+# ============================================================
+# MACOS
+# ============================================================
+
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+
+# ============================================================
+# WINDOWS THUMBNAILS
+# ============================================================
+
+ehthumbs.db
+ehthumbs_vista.db
+
+
+# ============================================================
+# COVERAGE
+# ============================================================
+
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.pytest_cache/
+
+
+# ============================================================
+# GENERATED AI / MODEL FILES
+# ============================================================
+
+*.pkl
+*.pickle
+*.joblib
+
+
+# ============================================================
+# LARGE DATASETS
+# ============================================================
+
+*.csv
+*.xlsx
+*.xls
+*.zip
+*.rar
+*.7z
+
+# If you have a dataset that MUST be included,
+# remove its extension from this section.
+
+
+# ============================================================
+# RESUME / JOB DESCRIPTION FILES
+# ============================================================
+
+*.pdf
+
+# IMPORTANT:
+# If your project contains documentation PDFs that should be
+# uploaded to GitHub, remove *.pdf from this section.
+
+
+# ============================================================
+# FRONTEND GENERATED FILES
+# ============================================================
+
+frontend/.next/
+frontend/.cache/
+frontend/.parcel-cache/
+frontend/.turbo/
+
+
+# ============================================================
+# BACKEND GENERATED FILES
+# ============================================================
+
+backend/__pycache__/
+backend/.pytest_cache/
+backend/.mypy_cache/
+backend/.venv/
+backend/venv/
+
+
+# ============================================================
+# GENERAL
+# ============================================================
+
+*.orig
+*.rej
