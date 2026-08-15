@@ -1,8 +1,18 @@
+import os
+
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.database.database import engine, Base
+
+
+# ============================================================
+# Load Environment Variables
+# ============================================================
+
+load_dotenv()
 
 
 # ============================================================
@@ -42,13 +52,16 @@ Base.metadata.create_all(bind=engine)
 
 
 # ============================================================
-# FastAPI App
+# Create FastAPI Application
 # ============================================================
 
 app = FastAPI(
     title="AI Career Intelligence System",
     version="1.0.0",
-    description="AI-powered Career Intelligence System using FastAPI, React, and PostgreSQL"
+    description=(
+        "AI-powered Career Intelligence System using "
+        "FastAPI, React, and PostgreSQL"
+    )
 )
 
 
@@ -56,15 +69,28 @@ app = FastAPI(
 # CORS Configuration
 # ============================================================
 
+FRONTEND_URL = os.getenv(
+    "FRONTEND_URL",
+    "http://localhost:5173"
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173"
+        FRONTEND_URL
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ============================================================
+# Create Upload Directories
+# ============================================================
+
+os.makedirs("uploads", exist_ok=True)
+os.makedirs("uploads/job_descriptions", exist_ok=True)
 
 
 # ============================================================
@@ -131,7 +157,7 @@ app.include_router(ats.router)
 
 
 # ----------------------------
-# Skill Gap
+# Skill Gap Analysis
 # ----------------------------
 app.include_router(skill_gap_router)
 
