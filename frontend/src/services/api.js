@@ -1,7 +1,10 @@
 import axios from "axios";
 
+export const BACKEND_URL =
+  "https://ai-powered-career-intelligence-system.onrender.com";
+
 const API = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: BACKEND_URL,
   headers: {
     "Content-Type": "application/json",
   },

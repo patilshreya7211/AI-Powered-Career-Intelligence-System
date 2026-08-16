@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
@@ -48,17 +48,16 @@ function Profile() {
   }, []);
 
   const loadProfile = async () => {
-    try {
-      const res = await axios.get(
-        `http://127.0.0.1:8000/profile/${user.id}`
-      );
-      setProfile((prev) => ({
-        ...prev,
-        ...res.data,
-      }));
-    } catch (err) {
-      console.log("Profile not found");
-    }
+  try {
+    const res = await API.get(`/profile/${user.id}`);
+
+    setProfile((prev) => ({
+      ...prev,
+      ...res.data,
+    }));
+  } catch (err) {
+    console.log("Profile not found");
+  }
   };
 
   const handleChange = (e) => {
@@ -121,9 +120,9 @@ function Profile() {
       return;
     }
     try {
-      await axios.put(
-        `http://127.0.0.1:8000/profile/update/${user.id}`,
-        profile
+      await API.put(
+        `/profile/update/${user.id}`,
+       profile
       );
       alert("Profile Updated Successfully!");
     } catch (error) {

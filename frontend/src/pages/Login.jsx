@@ -5,9 +5,9 @@ import API from "../services/api";
 function Login() {
   const navigate = useNavigate();
 
-  // ==========================================
+  // ============================================================
   // FORM DATA
-  // ==========================================
+  // ============================================================
 
   const [formData, setFormData] = useState({
     email: "",
@@ -16,25 +16,26 @@ function Login() {
 
   const [loading, setLoading] = useState(false);
 
-  // ==========================================
+  // ============================================================
   // HANDLE INPUT CHANGE
-  // ==========================================
+  // ============================================================
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  // ==========================================
+  // ============================================================
   // HANDLE LOGIN
-  // ==========================================
+  // ============================================================
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Prevent multiple requests
     if (loading) {
       return;
     }
@@ -47,9 +48,9 @@ function Login() {
       console.log("Email:", formData.email);
       console.log("=================================");
 
-      // ==========================================
+      // ========================================================
       // CALL FASTAPI LOGIN API
-      // ==========================================
+      // ========================================================
 
       const response = await API.post(
         "/auth/login",
@@ -58,69 +59,128 @@ function Login() {
 
       console.log("Login Response:", response.data);
 
-      // ==========================================
-      // GET USER FROM RESPONSE
-      // ==========================================
+      // ========================================================
+      // GET USER DATA
+      // ========================================================
 
       const user = response.data?.user;
 
-      // Your backend may return role in either:
-      // response.data.role
-      // OR
-      // response.data.user.role
+      if (!user) {
+        alert("Invalid login response from server.");
+        return;
+      }
+
+      // ========================================================
+      // GET ROLE
+      // ========================================================
 
       const role =
         response.data?.role ||
         user?.role ||
         "User";
 
-      // ==========================================
-      // CHECK USER
-      // ==========================================
+      console.log("Logged-in User:", user);
+      console.log("User Role:", role);
 
-      if (!user) {
+      // ========================================================
+      // GET USER ID
+      // ========================================================
+
+      const userId =
+        user?.id ||
+        user?.user_id ||
+        user?.userId ||
+        response.data?.user_id ||
+        response.data?.userId;
+
+      console.log("Logged-in User ID:", userId);
+
+      // ========================================================
+      // IMPORTANT:
+      // USER ID IS REQUIRED BY MANY BACKEND APIs
+      // ========================================================
+
+      if (!userId) {
+        console.error(
+          "User ID was not returned by the backend."
+        );
+
         alert(
-          "Invalid login response from server."
+          "Login successful, but user ID was not returned by the server."
         );
 
         return;
       }
 
-      console.log("Logged-in User:", user);
-      console.log("User Role:", role);
+      // ========================================================
+      // NORMALIZED USER OBJECT
+      // ========================================================
 
-      // ==========================================
-      // SAVE USER INFORMATION
-      // ==========================================
+      const normalizedUser = {
+        ...user,
+        id: userId,
+        role: role,
+      };
+
+      // ========================================================
+      // CLEAR OLD LOGIN DATA
+      // ========================================================
+
+      localStorage.removeItem("user");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("role");
+
+      // ========================================================
+      // SAVE NEW LOGIN DATA
+      // ========================================================
 
       localStorage.setItem(
         "user",
-        JSON.stringify(user)
+        JSON.stringify(normalizedUser)
       );
 
-      // Save role separately
+      localStorage.setItem(
+        "user_id",
+        String(userId)
+      );
+
       localStorage.setItem(
         "role",
-        role
+        String(role)
       );
 
-      // ==========================================
+      // ========================================================
+      // VERIFY LOCAL STORAGE
+      // ========================================================
+
+      console.log(
+        "Saved user:",
+        localStorage.getItem("user")
+      );
+
+      console.log(
+        "Saved user_id:",
+        localStorage.getItem("user_id")
+      );
+
+      console.log(
+        "Saved role:",
+        localStorage.getItem("role")
+      );
+
+      // ========================================================
       // LOGIN SUCCESS
-      // ==========================================
+      // ========================================================
 
       alert("Login Successful!");
 
-      // ==========================================
+      // ========================================================
       // ROLE-BASED REDIRECTION
-      // ==========================================
+      // ========================================================
 
       if (
-        role.toLowerCase() === "admin"
+        String(role).toLowerCase() === "admin"
       ) {
-        // ========================================
-        // ADMIN
-        // ========================================
-
         console.log(
           "Admin login detected."
         );
@@ -128,35 +188,28 @@ function Login() {
         navigate("/admin-dashboard");
 
       } else {
-
-        // ========================================
-        // NORMAL USER
-        // ========================================
-
         console.log(
-          "Normal user login detected."
+          "Student / Job Seeker login detected."
         );
 
         navigate("/dashboard");
       }
 
     } catch (error) {
-
-      // ==========================================
+      // ========================================================
       // LOGIN ERROR
-      // ==========================================
+      // ========================================================
 
       console.error(
         "Login Error:",
         error
       );
 
-      // ==========================================
+      // ========================================================
       // BACKEND RESPONSE ERROR
-      // ==========================================
+      // ========================================================
 
       if (error.response) {
-
         console.error(
           "Backend Error:",
           error.response.data
@@ -168,59 +221,54 @@ function Login() {
         const detail =
           error.response.data?.detail;
 
-        // ----------------------------------------
-        // Error message from backend
-        // ----------------------------------------
-
         if (detail) {
-
           alert(detail);
 
-        } else if (status === 401) {
+        } else if (status === 400) {
+          alert(
+            "Invalid login request."
+          );
 
+        } else if (status === 401) {
           alert(
             "Invalid email or password."
           );
 
         } else if (status === 404) {
-
           alert(
             "User not found."
           );
 
         } else if (status === 422) {
-
           alert(
             "Please enter a valid email and password."
           );
 
         } else if (status >= 500) {
-
           alert(
             "Server error. Please try again later."
           );
 
         } else {
-
           alert(
             "Login failed. Please try again."
           );
         }
 
-      // ==========================================
-      // REQUEST WAS SENT BUT NO RESPONSE
-      // ==========================================
+      // ========================================================
+      // REQUEST SENT BUT SERVER DID NOT RESPOND
+      // ========================================================
 
       } else if (error.request) {
 
         alert(
-          "Unable to connect to backend. " +
-          "Please make sure FastAPI is running on port 8000."
+          "Unable to connect to the backend. " +
+          "Please check your internet connection or Render backend."
         );
 
-      // ==========================================
+      // ========================================================
       // OTHER ERROR
-      // ==========================================
+      // ========================================================
 
       } else {
 
@@ -230,28 +278,26 @@ function Login() {
       }
 
     } finally {
-
-      // Always stop loading
       setLoading(false);
     }
   };
 
-  // ==========================================
+  // ============================================================
   // UI
-  // ==========================================
+  // ============================================================
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
 
-      {/* ========================================
+      {/* ======================================================
           LOGIN CARD
-      ======================================== */}
+      ====================================================== */}
 
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
 
-        {/* ======================================
+        {/* ====================================================
             TITLE
-        ====================================== */}
+        ==================================================== */}
 
         <h1 className="text-3xl font-bold text-center text-blue-700 mb-2">
           AI Career Intelligence System
@@ -261,18 +307,18 @@ function Login() {
           Login
         </h2>
 
-        {/* ======================================
+        {/* ====================================================
             LOGIN FORM
-        ====================================== */}
+        ==================================================== */}
 
         <form
           onSubmit={handleLogin}
           className="space-y-4"
         >
 
-          {/* ====================================
+          {/* ==================================================
               EMAIL
-          ==================================== */}
+          ================================================== */}
 
           <div>
 
@@ -293,9 +339,9 @@ function Login() {
 
           </div>
 
-          {/* ====================================
+          {/* ==================================================
               PASSWORD
-          ==================================== */}
+          ================================================== */}
 
           <div>
 
@@ -316,25 +362,23 @@ function Login() {
 
           </div>
 
-          {/* ====================================
+          {/* ==================================================
               LOGIN BUTTON
-          ==================================== */}
+          ================================================== */}
 
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed font-semibold transition"
           >
-
             {loading
               ? "Logging in..."
               : "Login"}
-
           </button>
 
-          {/* ====================================
+          {/* ==================================================
               REGISTER LINK
-          ==================================== */}
+          ================================================== */}
 
           <p className="text-center text-gray-600">
 
@@ -351,9 +395,9 @@ function Login() {
 
         </form>
 
-        {/* ======================================
+        {/* ====================================================
             ADMIN INFORMATION
-        ====================================== */}
+        ==================================================== */}
 
         <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-lg">
 
